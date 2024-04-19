@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Health Connect - Medical Facility{% endblock %}
+
+{% block content %}
+    <h1 class="text-center my-5 pt-4 fw-bold" style="color: #008cef">Doctors Near You</h1>
+    <div class="row align-items-center justify-content-evenly">
+        {%  for professional in professionals %}
+        <div class="col col-3 mb-5">
+            <div class="card">
+                <img src="{{ professional.image }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ professional.name }}
+                        {% if professional.verified %}
+                        	<span><img height="25px" src="{% static "icons/verified.svg" %}"></span>
+                        {% endif %}
+                    </h5>
+                    <h6 class="card-subtitle mb-3 text-body-secondary">{{ professional.speciality }}</h6>
+                    <div class="text-secondary d-flex">
+                        <img class="me-2" height="24px" height="24px" src="{% static "icons/school.svg" %}">
+                        <p>{{ professional.degrees }}</p>
+                    </div>
+                    <div class="text-secondary d-flex">
+                        <img class="me-2" height="24px" src="{% static "icons/exp.svg" %}">
+                        <p>{{ professional.experience }} years of Experience</p>
+                    </div>
+                    <div class="text-secondary d-flex">
+                        <img class="me-2" height="24px" src="{% static "icons/institute.svg" %}">
+                        <p>{{ professional.medical_facility.name }}</p>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                      <a type="button" href="/medical-professional/{{ professional.id }}" class="btn btn-primary">View More</a>
+                      <a type="button" href="" class="btn btn-success">Book Appointment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

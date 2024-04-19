@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Health Connect - {{ professional.name }}{% endblock %}
+{% block css %}<link href="{% static 'css/medical-professional-details.css' %}" rel="stylesheet">{% endblock %}
+
+{% block content %}
+    <div class="row mt-5 pt-5 mx-auto" style="max-width: 900px">
+        <div class="col"><img style="border-radius: 20px; width: 100%" src="{{ professional.image }}"></div>
+        <div class="col">
+        <h4 class="card-title mb-3">{{ professional.name }}
+                        {% if professional.verified %}
+                        	<span><img height="25px" src="{% static "icons/verified.svg" %}"></span>
+                        {% endif %}
+         </h4>
+            <p><span class="fw-bold">Gender:</span>{% if professional.gender %} Male {% else %} Female {% endif %}</p>
+            <p><span class="fw-bold">Speciality:</span>{{ professional.speciality }}</p>
+            <p><span class="fw-bold">Degrees:</span>{{ professional.degrees }}</p>
+            <p><span class="fw-bold">Hospital:</span>{{ professional.medical_facility.name }}</p>
+            <p><span class="fw-bold">Experience:</span>{{ professional.experience }} Years</p>
+            <p class=""></p>
+            <h6><span class="fw-bold">Description:</span></h6>
+            <p>{{ professional.description }}</p>
+
+        </div>
+
+    </div>
+    <div class="d-flex justify-content-center">
+        <button type="button" class="appointment-button me-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Book an Appointment</button>
+        <button class="appointment-button">Allow Access to Medical Reports</button>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal modal-lg fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Select Day and Hour</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            <!-- Day Selection -->
+            <label class="day-label mt-5" for="day">Select Day:</label>
+            <select required class="day-select mt-3 mb-5" id="day">
+              <option value="">Select Day</option>
+            </select>
+
+            <!-- Hour Selection -->
+            <label class="hour-label" for="hour">Select Hour:</label>
+            <select required class="hour-select mt-3 mb-5" id="hour">
+              <option value="">Select Hour</option>
+            </select>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" id="modal-submit" data-bs-toggle="modal" data-bs-target="#confirmModal" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="confirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Confirmation</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Appointment with doctor requires you to share your medical records with the doctor.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="{% url 'user-profile' %}"><button type="button" class="confirmation-modal-button btn btn-primary">Understood</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+  var daySelect = document.getElementById("day");
+  var hourSelect = document.getElementById("hour");
+
+  // Function to populate day options
+  function populateDayOptions() {
+    var today = new Date();
+    for (var i = 0; i < 7; i++) {
+      var option = document.createElement("option");
+      var date = new Date(today);
+      date.setDate(today.getDate() + i);
+      option.value = date.toISOString().slice(0,10); // Only YYYY-MM-DD
+      option.text = date.toDateString();
+      daySelect.appendChild(option);
+    }
+  }
+
+  // Function to populate hour options
+  function populateHourOptions() {
+    for (var i = 8; i <= 17; i++) {
+      var option = document.createElement("option");
+      option.value = i;
+      option.text = i + ":00";
+      hourSelect.appendChild(option);
+    }
+  }
+
+  // Populate the day and hour options when the page loads
+  populateDayOptions();
+  populateHourOptions();
+
+  // Add event listener to handle selection change
+  daySelect.addEventListener("change", function() {
+    updateHourOptions();
+  });
+
+  // Function to update hour options based on selected day
+  function updateHourOptions() {
+    var selectedDay = new Date(daySelect.value);
+    var today = new Date();
+    var hours = [];
+    if (selectedDay.setHours(0,0,0,0) === today.setHours(0,0,0,0)) {
+      // If selected day is today, start from current hour
+      var currentHour = new Date().getHours();
+      for (var i = currentHour; i <= 17; i++) {
+        hours.push(i);
+      }
+    } else {
+      // Otherwise, start from 8 AM
+      for (var i = 8; i <= 17; i++) {
+        hours.push(i);
+      }
+    }
+    // Clear previous hour options
+    hourSelect.innerHTML = '<option value="">Select Hour</option>';
+    // Populate hour options
+    hours.forEach(function(hour) {
+      var option = document.createElement("option");
+      option.value = hour;
+      option.text = hour + ":00";
+      hourSelect.appendChild(option);
+    });
+  }
+});
+</script>
+{% endblock %}

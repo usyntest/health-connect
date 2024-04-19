@@ -1,6 +1,22 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Health Connect - Home{% endblock %}
-
+{% block css %}<link href="{% static "css/home.css" %}" rel="stylesheet">{% endblock %}
 {% block content %}
-    <p>Health Connect is a digital solution to connect doctors and patients</p>
+    <div class="d-flex align-items-center justify-content-center h-100">
+
+        <div class="w-50">
+            <img src="{% static 'images/hero.svg' %}">
+        </div>
+        <div class="w-50 my-auto">
+            <h1 class="hero-heading fw-bold">Health Connect</h1>
+            <p class="hero-subtitle fw-medium">Digitalizing Indian Healthcare</p>
+            <p class="hero-description">Health Connect is a digital solution connecting patients and doctors online and providing diagnosis using machine learning.</p>
+            <div class="d-flex">
+                <a href="{% url 'disease-detection' %}"><button class="hero-button">Get your first AI Disease Detection</button></a>
+                <a href="{% url 'medical-professionals' %}"><button class="hero-button">Book Appointments with Doctors</button></a>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %} {% load static %} {% block title %}Health Connect - AI
+{{ disease }} Detection{% endblock %} {% block css %}<link
+  href="{% static 'css/disease-detection.css' %}"
+  rel="stylesheet"
+/>{% endblock %} {% block content %}
+<div style="max-width: 600px" class="mx-auto">
+  <div class="mt-5 pt-5 d-flex justify-content-between align-items-start">
+    <img height="50px" src="{% static 'images/logo.png' %}" />
+    <p class="fw-bold">19 April 2024</p>
+  </div>
+  <hr />
+  <div>
+    <h3 class="my-3 text-center">Personal Details</h3>
+      <div class="row">
+          <div class="col-6">
+              <p><span class="fw-bold">Name:</span> Uday Sharma</p>
+              <p><span class="fw-bold">Birthdate:</span> 16th January 2005</p>
+              <p><span class="fw-bold">Gender:</span> Male</p>
+              <p><span class="fw-bold">ABHA ID:</span> 12 3456 7890 1234 5678</p>
+              <p><span class="fw-bold">Phone No.:</span> +91 8368899843</p>
+              <p><span class="fw-bold">Email:</span> itsudayy@gmail.com</p>
+          </div>
+          <div class="col-6">
+              <img width="100%" src="{% static 'models/covid1.jpeg' %}">
+          </div>
+      </div>
+    
+  </div>
+  <div>
+    <h3 class="my-3 text-center">Test Details</h3>
+    <p><span class="fw-bold">Disease:</span> {{ disease }}</p>
+    <p><span class="fw-bold">Type:</span> CNN Based ML Test</p>
+    <p>
+      <span class="fw-bold">Model Link:</span>
+      <a
+        href="{% if disease == 'Pneumonia' %}
+      https://huggingface.co/timm/vit_small_patch16_224.augreg_in21k/tree/main
+      {% else %}
+      https://huggingface.co/nickmuchi/vit-finetuned-chest-xray-pneumonia 
+      {% endif %}"
+        >HuggingFace.co Model Link</a
+      >
+    </p>
+    <p><span class="fw-bold">Input:</span> Chest X-Ray</p>
+
+  </div>
+    <h4 class="text-center"><span class="fw-bold">RESULT: </span>{% if result == "Negative" %}
+        <span class="text-success">Negative</span>
+    	{% else %}
+        <span class="text-danger">Positive</span>
+    {% endif %}</h4>
+</div>
+
+{% endblock %}

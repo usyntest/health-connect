@@ -1,0 +1,87 @@
+{% extends "base.html" %} {% load static %} {% block title %}Health Connect - AI
+Disease Detection{% endblock %} {% block css %}<link
+  href="{% static 'css/disease-detection.css' %}"
+  rel="stylesheet"
+/>{% endblock %} {% block content %}
+<h1 class="text-center my-5 pt-4 fw-bold" style="color: #008cef">
+  AI Disease Diagnosis
+</h1>
+<div class="text-center">
+  <img src="{% static 'images/ai.svg' %}" height="350px" />
+</div>
+
+<div class="row align-items-center justify-content-evenly mt-5">
+  <div class="col-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">COVID-19</h5>
+        <p class="card-text">
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/percentage.svg" %}">
+            <p>Accuracy - 92%</p>
+          </div>
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/input.svg" %}">
+            <p>Chest X-Rays</p>
+          </div>
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/verified.svg" %}">
+            <p>Health Connect Approved</p>
+          </div>
+          
+        </p>
+        <a href="{% url 'covid' %}" class="btn btn-primary">Self Diagnose</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Pneumonia</h5>
+        <p class="card-text">
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/percentage.svg" %}">
+            <p>Accuracy - 95.51%</p>
+          </div>
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/input.svg" %}">
+            <p>Chest X-Rays</p>
+          </div>
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/verified.svg" %}">
+            <p>Health Connect Approved</p>
+          </div>
+          
+        </p>
+        <a href="{% url 'pneumonia' %}" class="btn btn-primary">Self Diagnose</a>
+      </div>
+    </div>
+  </div>
+
+<div class="col-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Tuberculosis</h5>
+        <p class="card-text">
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/percentage.svg" %}">
+            <p>Accuracy - Upcoming </p>
+          </div>
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/input.svg" %}">
+            <p>Chest X-Rays</p>
+          </div>
+          <div class="text-secondary d-flex">
+            <img class="me-2" height="24px" height="24px" src="{% static "icons/verified.svg" %}">
+            <p>Health Connect Approved</p>
+          </div>
+          
+        </p>
+        <a href="#" class="btn btn-primary">Self Diagnose</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

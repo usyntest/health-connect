@@ -1,0 +1,33 @@
+body {
+    background-image: url("../images/bg.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-color: whitesmoke;
+    color: #008CEF;
+}
+
+.hero-heading {
+    font-size: 5rem;
+    color: #008CEF;
+}
+
+.hero-subtitle {
+    font-size: 2rem;
+}
+
+.hero-description {
+    font-size: 1.5rem;
+}
+
+.hero-button {
+    /*border: 5px solid #c9c4c4;*/
+    border-radius: 5px;
+    background-color: #008CEF;
+    font-size: 1.1rem;
+    margin-right: 10px;
+    /*color: #A4D5E6;*/
+    color: #ffffff;
+    margin-top: 5px;
+    padding: 12px;
+}
