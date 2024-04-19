@@ -52,11 +52,11 @@ def covid(request):
     headers = {"Authorization": f"Bearer {API_KEY}"}
 
     data = query("/Users/uday/Development/github/hc/portal/static/models/normal2.jpeg", api_url, headers)
-    return render(request, "disease.html", {"disease": "Pneumonia", "Result": True})
+    return render(request, "disease.html", {"disease": "Covid-19", "Result": False})
 
 def pneumonia(request):
     api_url = "https://api-inference.huggingface.co/models/nickmuchi/vit-finetuned-chest-xray-pneumonia"
     headers = {"Authorization": f"Bearer {API_KEY}"}
 
     data = query("/Users/uday/Development/github/hc/portal/static/models/pneumonia.jpeg", api_url, headers)
-    return render(request, "disease.html", {"disease": "Pneumonia", "Result": True})
+    return render(request, "disease.html", {"disease": "Pneumonia", "result": False})
