@@ -18,7 +18,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.get('', (req: Request, res: Response) => {
+app.get('', authentication, (req: Request, res: Response) => {
     res.status(200).json({
         status: 200,
         success: true,
