@@ -42,8 +42,7 @@ app.listen(port, async () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
 
     try {
-
-        await mongoose.connect(`mongodb+srv://usyntest:${process.env.DATABASE_PASSWORD as string}@cluster0.1mvxsyf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
+        await mongoose.connect(`mongodb+srv://${process.env.DATABASE_USERNAME as string}:${process.env.DATABASE_PASSWORD as string}@cluster0.1mvxsyf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`)
 
         console.log("[server]: Connected to Database")
 
