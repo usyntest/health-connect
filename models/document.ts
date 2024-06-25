@@ -17,7 +17,7 @@ const DocumentSchema = new mongoose.Schema(
       enum: ["Prescription", "CT Scan", "Report"],
     },
     documentURL: {
-      type: Image,
+      type: String,
       required: false,
       default: "",
     },

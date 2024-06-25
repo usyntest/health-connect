@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const documentSharedSchema = new mongoose.Schema({
+const sharedDocumentSchema = new mongoose.Schema({
   documentID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Document",
@@ -15,7 +15,7 @@ const documentSharedSchema = new mongoose.Schema({
   },
 });
 
-export const Appointment = mongoose.model(
-  "DocumentShared",
-  documentSharedSchema
+export const SharedDocument = mongoose.model(
+  "SharedDocument",
+  sharedDocumentSchema
 );

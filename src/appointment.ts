@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { CustomRequest } from "./user.authentication";
 import { Appointment } from "../models/appointment";
+import { Doctor } from "../models/doctor";
+import { User } from "../models/user";
+import { Document } from "../models/document";
+import { SharedDocument } from "../models/documentShared";
 
 // ENDPOINT TO GET ALL APPOINTMENTS OF AN USER
 // REQUIREMENT - userID
@@ -105,6 +109,77 @@ export const changeAppointmentStatus = async (req: Request, res: Response) => {
     res.status(500).json({
       status: 500,
       message: "Internal Server Error",
+    });
+  }
+};
+
+// (GET) /appointment/:id
+export const getAppointment = async (req: Request, res: Response) => {
+  try {
+    if (!req.params.id) {
+      return res.status(400).json({
+        status: 400,
+        message: "Appointment ID is not given",
+      });
+    }
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      res.status(404).json({
+        status: 404,
+        message: "No appointment with this ID",
+      });
+    }
+
+    const doctor = await Doctor.findById(appointment?.doctorID);
+    const user = await User.findById(appointment?.userID);
+
+    const documents = await Document.find({
+      private: false,
+      userID: user?._id,
+    });
+
+    const sharedList = await SharedDocument.find({
+      userID: user?._id,
+      doctorID: doctor?._id,
+    });
+
+    const documentList = documents.filter((document) =>
+      sharedList.some(
+        (sharedDocument) => sharedDocument.documentID === document._id
+      )
+    );
+
+    return res.status(200).json({
+      status: 200,
+      appointmentDetails: {
+        doctorDetails: {
+          doctorName: doctor?.name,
+          doctorImage: doctor?.imageURL,
+          doctorID: doctor?._id,
+        },
+        userDetails: {
+          userName: user?.name,
+          userImage: user?.imageURL,
+        },
+        documentsShared: documentList.map((document) => {
+          return {
+            documentName: document.name,
+            documentURL: document.documentURL,
+            type: document.type,
+          };
+        }),
+        status: appointment?.status,
+        meetingLink: appointment?.meetingLink,
+        appointmentTime: appointment?.appointmentTime,
+        message: appointment?.message,
+      },
+    });
+  } catch (error) {
+    console.log(`[server]: ${error}`);
+    return res.status(500).json({
+      status: 500,
+      message: "Internal server error",
     });
   }
 };

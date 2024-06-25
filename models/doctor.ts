@@ -15,8 +15,8 @@ const DoctorSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    photograph: {
-      type: Image,
+    imageURL: {
+      type: String,
       required: true,
       default: "",
     },

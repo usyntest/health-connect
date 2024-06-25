@@ -13,6 +13,7 @@ import {
   changeAppointmentStatus,
   createAppointment,
   getAllAppointment,
+  getAppointment,
 } from "./appointment";
 import { getUser } from "./user";
 
@@ -39,6 +40,7 @@ app.get("", authentication, (req: Request, res: Response) => {
 
 // APPOINTMENT
 app.get("/appointment/all", authentication, getAllAppointment);
+app.get("/appointment/:id", authentication, getAppointment);
 app.post("/appointment/create", authentication, createAppointment);
 app.post("/appointment/status", authentication, changeAppointmentStatus);
 
