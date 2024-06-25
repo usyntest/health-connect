@@ -27,6 +27,7 @@ const authentication = (
   const secret: string | undefined = process.env.JWT_SECRET;
 
   if (!secret) {
+    console.log(`[server]: Problem with dotenv file JWT secret`);
     return res.send(500).json({
       status: 500,
       message: "Internal server error",

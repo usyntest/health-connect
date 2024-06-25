@@ -22,6 +22,10 @@ const AppointmentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  receiptID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Documents",
+  },
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

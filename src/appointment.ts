@@ -49,7 +49,7 @@ export const createAppointment = async (req: Request, res: Response) => {
     const newAppointment = await Appointment.create({
       doctorID,
       userID,
-      appointmentTimeNew,
+      appointmentTime: appointmentTimeNew,
       meetingLink: "https://meet.google.com/xxa-pcvz-jtd",
       status: "Upcoming",
       message,

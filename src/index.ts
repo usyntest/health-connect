@@ -14,6 +14,7 @@ import {
   createAppointment,
   getAllAppointment,
 } from "./appointment";
+import { getUser } from "./user";
 
 // AUTHENTICATION MIDDLEWARE
 import authentication from "./user.authentication";
@@ -44,6 +45,9 @@ app.post("/appointment/status", authentication, changeAppointmentStatus);
 // AUTHENTICATION
 app.post("/auth/register", register);
 app.post("/auth/login", login);
+
+// USER
+app.get("/user", authentication, getUser);
 
 app.listen(port, async () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
