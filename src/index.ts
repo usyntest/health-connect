@@ -19,6 +19,7 @@ import { getUser } from "./user";
 
 // AUTHENTICATION MIDDLEWARE
 import authentication from "./user.authentication";
+import { uploadDocument } from "./document";
 
 const app: Application = express();
 const port = process.env.PORT || 3000;
@@ -43,6 +44,9 @@ app.get("/appointment/all", authentication, getAllAppointment);
 app.get("/appointment/:id", authentication, getAppointment);
 app.post("/appointment/create", authentication, createAppointment);
 app.post("/appointment/change", authentication, changeAppointment);
+
+// DOCUMENT
+app.post("/document/upload", authentication, uploadDocument);
 
 // AUTHENTICATION
 app.post("/auth/register", register);

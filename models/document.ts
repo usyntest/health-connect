@@ -6,7 +6,11 @@ const DocumentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    private: {
+    key: {
+      type: String,
+      required: true,
+    },
+    isPrivate: {
       type: Boolean,
       required: false,
       default: true,
@@ -14,7 +18,6 @@ const DocumentSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["Prescription", "CT Scan", "Report"],
     },
     documentURL: {
       type: String,
