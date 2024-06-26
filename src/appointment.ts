@@ -6,6 +6,54 @@ import { User } from "../models/user";
 import { Document } from "../models/document";
 import { SharedDocument } from "../models/documentShared";
 
+const checkAppointmentTime = async (
+  appointmentTime: Date,
+  appointmentID: String = "",
+  doctorID: String = ""
+) => {
+  const appointmentTimeNew = new Date(appointmentTime);
+  const now = new Date();
+
+  if (appointmentTimeNew <= now) {
+    return {
+      error: true,
+      message: "Appointment time must be in the future",
+    };
+  }
+
+  if (appointmentID) {
+    const doctor = await Appointment.findById(appointmentID);
+    const appointment = await Appointment.findOne({
+      doctorID: doctor?._id,
+      appointmentTime: appointmentTimeNew,
+    });
+
+    if (appointment) {
+      return {
+        error: true,
+        message: "Doctor already has an appointment at the time",
+      };
+    }
+  } else {
+    const appointment = await Appointment.findOne({
+      doctorID: doctorID,
+      appointmentTime: appointmentTimeNew,
+    });
+
+    if (appointment) {
+      return {
+        error: true,
+        message: "Doctor already has an appointment at the time",
+      };
+    }
+  }
+
+  return {
+    error: false,
+    appointmentTime: appointmentTimeNew,
+  };
+};
+
 // ENDPOINT TO GET ALL APPOINTMENTS OF AN USER
 // REQUIREMENT - userID
 export const getAllAppointment = async (req: CustomRequest, res: Response) => {
@@ -27,33 +75,23 @@ export const createAppointment = async (req: Request, res: Response) => {
   const { doctorID, userID, appointmentTime, message } = appointment;
 
   try {
-    const now = new Date();
-    const appointmentTimeNew = new Date(appointmentTime);
+    const existingAppointment = await checkAppointmentTime(
+      appointmentTime,
+      "",
+      doctorID
+    );
 
-    if (appointmentTimeNew <= now) {
+    if (existingAppointment.error) {
       return res.status(400).json({
         status: 400,
-        message: "Appointment time must be in the future",
-      });
-    }
-
-    const existingAppointment = await Appointment.findOne({
-      doctorID: doctorID,
-      appointmentTime: appointmentTimeNew,
-      status: "Upcoming",
-    });
-
-    if (existingAppointment) {
-      return res.status(400).json({
-        status: 400,
-        message: "Doctor already has an appointment at the time",
+        message: existingAppointment.message,
       });
     }
 
     const newAppointment = await Appointment.create({
       doctorID,
       userID,
-      appointmentTime: appointmentTimeNew,
+      appointmentTime: existingAppointment.appointmentTime,
       meetingLink: "https://meet.google.com/xxa-pcvz-jtd",
       status: "Upcoming",
       message,
@@ -68,8 +106,8 @@ export const createAppointment = async (req: Request, res: Response) => {
 
 // ENDPOINT TO CHANGE STATUS OF AN APPOINTMENT
 // REQUIREMENT - appointmentID, statuse
-export const changeAppointmentStatus = async (req: Request, res: Response) => {
-  const { appointmentID, status } = req.body;
+export const changeAppointment = async (req: Request, res: Response) => {
+  const { appointmentID, time, status } = req.body;
 
   if (!appointmentID) {
     return res.status(400).json({
@@ -78,17 +116,35 @@ export const changeAppointmentStatus = async (req: Request, res: Response) => {
     });
   }
 
-  if (!(status in ["Upcoming", "Cancelled", "Completed"])) {
+  if (status && !(["Upcoming", "Cancelled", "Completed"].includes(status))) {
     return res.status(400).json({
       status: 400,
       message: 'Status can be "Upcoming", "Cancelled", "Completed"',
     });
   }
 
+  const existingAppointment = await checkAppointmentTime(time, appointmentID);
+
+  if (time && existingAppointment.error) {
+    return res.status(400).json({
+      status: 400,
+      messsage: existingAppointment.message,
+    });
+  }
+
   try {
+    const changeContent: any = {};
+    if (time) {
+      changeContent.appointmentTime = existingAppointment.appointmentTime;
+    }
+    if (status) {
+      changeContent.status = status;
+    }
     const updatedAppointment = await Appointment.findByIdAndUpdate(
-      appointmentID,
-      { $set: { status: status } },
+      { _id: appointmentID },
+      {
+        $set: changeContent,
+      },
       { new: true }
     );
 
@@ -96,17 +152,17 @@ export const changeAppointmentStatus = async (req: Request, res: Response) => {
       return res.status(200).json({
         status: 200,
         sucess: true,
-        message: `Status changed to ${status}`,
+        message: `Changed Successfully`,
       });
     }
 
-    res.status(404).json({
+    return res.status(404).json({
       status: 404,
       message: `Appointment not found`,
     });
   } catch (error) {
     console.log(`[server]: ${error}`);
-    res.status(500).json({
+    return res.status(500).json({
       status: 500,
       message: "Internal Server Error",
     });
