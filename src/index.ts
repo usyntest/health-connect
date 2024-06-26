@@ -10,7 +10,7 @@ dotenv.config({ path: __dirname + "/../.env" });
 import register from "./register";
 import login from "./login";
 import {
-  changeAppointmentStatus,
+  changeAppointment,
   createAppointment,
   getAllAppointment,
   getAppointment,
@@ -42,7 +42,7 @@ app.get("", authentication, (req: Request, res: Response) => {
 app.get("/appointment/all", authentication, getAllAppointment);
 app.get("/appointment/:id", authentication, getAppointment);
 app.post("/appointment/create", authentication, createAppointment);
-app.post("/appointment/status", authentication, changeAppointmentStatus);
+app.post("/appointment/change", authentication, changeAppointment);
 
 // AUTHENTICATION
 app.post("/auth/register", register);
