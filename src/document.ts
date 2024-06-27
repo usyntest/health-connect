@@ -33,7 +33,7 @@ const upload = multer({
     bucket: process.env.S3_BUCKET_NAME,
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key(req: Request, file: Express.Multer.File, cb) {
-      cb(null, `${Date.now()}-${file.originalname}`);
+      cb(null, `documents/${Date.now()}-${file.originalname}`);
     },
   }),
 });
@@ -68,5 +68,26 @@ export const uploadDocument = async (req: CustomRequest, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error!" });
+  }
+};
+
+export const getAllDocuments = async (req: CustomRequest, res: Response) => {
+  const userID = req.user?._id;
+
+  try {
+    const documentList = await Document.find({
+      userID: userID,
+    });
+
+    return res.status(200).json({
+      status: 200,
+      documentList: documentList,
+    });
+  } catch (error) {
+    console.log(`[server]: ${error}`);
+    res.status(500).json({
+      status: 500,
+      message: "Internal server error",
+    });
   }
 };
