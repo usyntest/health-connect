@@ -116,7 +116,7 @@ export const changeAppointment = async (req: Request, res: Response) => {
     });
   }
 
-  if (status && !(["Upcoming", "Cancelled", "Completed"].includes(status))) {
+  if (status && !["Upcoming", "Cancelled", "Completed"].includes(status)) {
     return res.status(400).json({
       status: 400,
       message: 'Status can be "Upcoming", "Cancelled", "Completed"',
@@ -178,7 +178,11 @@ export const getAppointment = async (req: Request, res: Response) => {
         message: "Appointment ID is not given",
       });
     }
-    const appointment = await Appointment.findById(req.params.id);
+
+    const appointment: any = await Appointment.findById(req.params.id).populate(
+      "userID"
+    );
+    // .populate("doctorID");
 
     if (!appointment) {
       res.status(404).json({
@@ -187,44 +191,46 @@ export const getAppointment = async (req: Request, res: Response) => {
       });
     }
 
-    const doctor = await Doctor.findById(appointment?.doctorID);
-    const user = await User.findById(appointment?.userID);
-
-    const documents = await Document.find({
-      private: false,
-      userID: user?._id,
-    });
+    const doctor = await Doctor.findById(appointment.doctorID);
+    if (!doctor) {
+      return res.status(500).json({
+        status: 500,
+        message: "Couldn't find doctor",
+      });
+    }
 
     const sharedList = await SharedDocument.find({
-      userID: user?._id,
-      doctorID: doctor?._id,
+      userID: appointment?.userID?._id,
+      doctorID: appointment?.doctorID?._id,
     });
 
-    const documentList = documents.filter((document) =>
-      sharedList.some(
-        (sharedDocument) => sharedDocument.documentID === document._id
-      )
-    );
+    console.log(doctor._id);
+    console.log(sharedList);
+
+    const documentList = sharedList.map(async (sharedDocument) => {
+      const document = await Document.findById(sharedDocument.documentID);
+      if (document) {
+        return {
+          documentName: document.name,
+          documentURL: document.documentURL,
+          type: document.type,
+        };
+      }
+    });
 
     return res.status(200).json({
       status: 200,
       appointmentDetails: {
         doctorDetails: {
-          doctorName: doctor?.name,
-          doctorImage: doctor?.imageURL,
-          doctorID: doctor?._id,
+          doctorName: doctor.name,
+          doctorImage: doctor.imageURL,
+          doctorID: doctor._id,
         },
         userDetails: {
-          userName: user?.name,
-          userImage: user?.imageURL,
+          userName: appointment?.userID?.name,
+          userImage: appointment?.userID?.imageURL,
         },
-        documentsShared: documentList.map((document) => {
-          return {
-            documentName: document.name,
-            documentURL: document.documentURL,
-            type: document.type,
-          };
-        }),
+        documentsShared: await Promise.all(documentList),
         status: appointment?.status,
         meetingLink: appointment?.meetingLink,
         appointmentTime: appointment?.appointmentTime,

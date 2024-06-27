@@ -3,15 +3,15 @@ import mongoose from "mongoose";
 const sharedDocumentSchema = new mongoose.Schema({
   documentID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Document",
+    ref: "Documents",
   },
   userID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Users",
   },
   doctorID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Doctor",
+    ref: "Doctors",
   },
 });
 
