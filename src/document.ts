@@ -4,6 +4,7 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 import { CustomRequest } from "./user.authentication";
 import { Document } from "../models/document";
+import { SharedDocument } from "../models/documentShared";
 
 if (
   !process.env.AWS_REGION ||
@@ -85,6 +86,48 @@ export const getAllDocuments = async (req: CustomRequest, res: Response) => {
     });
   } catch (error) {
     console.log(`[server]: ${error}`);
+    res.status(500).json({
+      status: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const shareDocument = async (req: CustomRequest, res: Response) => {
+  const userID = req.user?._id;
+  const { doctorID, documentID } = req.body;
+
+  if (!(doctorID || documentID)) {
+    return res.status(400).json({
+      status: 400,
+      message: "Invalid request parameters not complete",
+    });
+  }
+
+  try {
+    const newSharedDocument = await SharedDocument.create({
+      userID,
+      doctorID,
+      documentID,
+    });
+
+    const changeStatus = await Document.findByIdAndUpdate(documentID, {
+      $set: { isPrivate: false },
+    });
+
+    console.log(changeStatus);
+    if (!changeStatus) {
+      return res.status(500).json({
+        status: 500,
+        message: "Internal server error",
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: "Document successfully shared",
+    });
+  } catch (error) {
     res.status(500).json({
       status: 500,
       message: "Internal server error",
