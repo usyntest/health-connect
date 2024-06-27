@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Request, Response } from "express";
 import multer from "multer";
 import multerS3 from "multer-s3";
@@ -15,7 +15,7 @@ if (
   throw new Error("Missing required environment variables!");
 }
 
-const s3 = new S3Client({
+const s3 = new S3({
   region: process.env.AWS_REGION,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -87,6 +87,58 @@ export const getAllDocuments = async (req: CustomRequest, res: Response) => {
   } catch (error) {
     console.log(`[server]: ${error}`);
     res.status(500).json({
+      status: 500,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const getDocument = async (req: CustomRequest, res: Response) => {
+  try {
+    if (!req.params.id) {
+      res.status(400).json({
+        status: 400,
+        message: "Document ID is not given",
+      });
+    }
+
+    const document = await Document.findById(req.params.id);
+
+    if (!document) {
+      return res.status(404).json({
+        status: 404,
+        message: "Document not found",
+      });
+    }
+
+    const command = new GetObjectCommand({
+      Bucket: "health-connect", // Ensure this bucket name is correct and properly configured
+      Key: document.key, // Ensure this key is correct
+    });
+
+    const s3Object = await s3.send(command);
+
+    if (!s3Object.Body) {
+      return res.status(404).json({
+        status: 404,
+        message: "File not found in S3",
+      });
+    }
+
+    // Set appropriate content headers
+    res.setHeader(
+      "Content-Type",
+      s3Object.ContentType || "application/octet-stream"
+    ); // Use ContentType from S3 response
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${document.key}"`
+    );
+
+    (s3Object.Body as any).pipe(res);
+  } catch (error) {
+    console.log(`[server]: ${error}`);
+    return res.status(500).json({
       status: 500,
       message: "Internal server error",
     });
