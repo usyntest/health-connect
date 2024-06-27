@@ -28,11 +28,11 @@ const AppointmentSchema = new mongoose.Schema({
   },
   userID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Users",
   },
   doctorID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Doctor",
+    ref: "Doctors",
   },
 });
 
