@@ -75,6 +75,6 @@ app.listen(port, async () => {
 
     console.log("[server]: Connected to Database");
   } catch (error) {
-    console.log("[server]: Error connecting to database");
+    console.log(`[server]: Error connecting to database : ${error}`);
   }
 });
