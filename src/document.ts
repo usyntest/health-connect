@@ -57,7 +57,7 @@ export const uploadDocument = async (req: CustomRequest, res: Response) => {
         name: req.file?.originalname,
         key,
         type: req.body?.type,
-        isPrivate: req.body?.isPrivate,
+        isPrivate: true,
         documentURL: location,
       });
       return res.status(200).json({
